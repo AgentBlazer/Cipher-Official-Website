@@ -39,3 +39,4 @@ temp_sec_*.jpg
 
 .vercel
 GDG/
+.env*

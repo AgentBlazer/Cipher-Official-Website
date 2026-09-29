@@ -1,9 +1,10 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  Mail, Terminal, Heart,
+  Terminal,
 } from "lucide-react";
-import { GithubIcon, LinkedinIcon, InstagramIcon } from "./Icons.tsx";
+import { LinkedinIcon, InstagramIcon } from "./Icons.tsx";
 import { useTheme } from "../context/ThemeContext.tsx";
 
 interface FooterProps {
@@ -15,23 +16,19 @@ export const Footer: React.FC<FooterProps> = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const [email, setEmail] = useState("cipher@sjec.ac.in");
-  const [linkedin, setLinkedin] = useState("https://linkedin.com");
-  const [github, setGithub] = useState("https://github.com");
-  const [instagram, setInstagram] = useState("https://instagram.com");
+  const [linkedin, setLinkedin] = useState("https://www.linkedin.com/company/ciphersjec/");
+  const [instagram, setInstagram] = useState("https://www.instagram.com/ciphersjec/");
   const [copyright, setCopyright] = useState("© 2026 CIPHER SJEC. All Rights Reserved.");
   const [logoUrl, setLogoUrl] = useState("/assets/logo.png");
 
   useEffect(() => {
     async function fetchContent() {
       try {
-        const res = await fetch("/api/public/content");
+        const res = await fetch(`${API_BASE}/api/public/content`);
         if (res.ok) {
           const json = await res.json();
           if (json.map) {
-            if (json.map.contact_email) setEmail(json.map.contact_email);
             if (json.map.linkedin_url) setLinkedin(json.map.linkedin_url);
-            if (json.map.github_url) setGithub(json.map.github_url);
             if (json.map.instagram_url) setInstagram(json.map.instagram_url);
             if (json.map.footer_copyright) setCopyright(json.map.footer_copyright);
             if (json.map.site_logo_url) setLogoUrl(json.map.site_logo_url);
@@ -138,11 +135,6 @@ export const Footer: React.FC<FooterProps> = () => {
                     <span className="text-emerald-600 dark:text-[#00ff66] font-bold">&gt;</span> Join / Contact
                   </Link>
                 </li>
-                <li>
-                  <Link to="/contributors" className="hover:text-emerald-600 dark:hover:text-[#00ff66] hover:translate-x-1.5 transition-all inline-flex items-center gap-2">
-                    <Heart className="w-4 h-4 text-emerald-600 dark:text-[#00ff66]" /> Contributors
-                  </Link>
-                </li>
               </ul>
             </div>
 
@@ -153,7 +145,7 @@ export const Footer: React.FC<FooterProps> = () => {
         {/* ── Below the Line: Social Logos & (Full Cipher Logo + Copyright) ── */}
         <div className="mt-14 pt-8 border-t border-gray-200 dark:border-[#00ff66]/15 flex flex-col sm:flex-row items-center justify-between gap-6">
           
-          {/* Left: Social Icons (Insta, Mail, LinkedIn, GitHub) */}
+          {/* Left: Social Icons (Instagram, LinkedIn) */}
           <div className="flex items-center gap-3.5">
             {instagram && (
               <a
@@ -171,19 +163,6 @@ export const Footer: React.FC<FooterProps> = () => {
               </a>
             )}
 
-            {email && (
-              <a
-                href={`mailto:${email}`}
-                aria-label="Email"
-                className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all ${
-                  isDark
-                    ? "border-[#00ff66]/30 hover:border-[#00ff66] hover:bg-[#00ff66]/10 text-[#00ff66]"
-                    : "border-gray-300 hover:border-emerald-500 hover:bg-emerald-50 text-gray-700"
-                }`}
-              >
-                <Mail className="w-4 h-4" />
-              </a>
-            )}
 
             {linkedin && (
               <a
@@ -198,22 +177,6 @@ export const Footer: React.FC<FooterProps> = () => {
                 }`}
               >
                 <LinkedinIcon className="w-4 h-4" />
-              </a>
-            )}
-
-            {github && (
-              <a
-                href={github}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub"
-                className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all ${
-                  isDark
-                    ? "border-[#00ff66]/30 hover:border-[#00ff66] hover:bg-[#00ff66]/10 text-[#00ff66]"
-                    : "border-gray-300 hover:border-emerald-500 hover:bg-emerald-50 text-gray-700"
-                }`}
-              >
-                <GithubIcon className="w-4 h-4" />
               </a>
             )}
           </div>

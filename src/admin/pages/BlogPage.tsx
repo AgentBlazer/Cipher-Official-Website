@@ -1,3 +1,4 @@
+import { API_BASE } from "../../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import {
   Plus, Edit2, Trash2, Search, Eye, EyeOff, Loader2,
@@ -75,7 +76,7 @@ export const BlogPage: React.FC = () => {
   const load = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/blog", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/blog`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setPosts(data.data || []);
@@ -135,7 +136,7 @@ export const BlogPage: React.FC = () => {
         publishedAt: new Date(formData.publishedAt).toISOString(),
       };
 
-      const url = editingPost ? `/api/admin/blog/${editingPost.id}` : "/api/admin/blog";
+      const url = editingPost ? `${API_BASE}/api/admin/blog/${editingPost.id}` : `${API_BASE}/api/admin/blog`;
       const method = editingPost ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
@@ -162,7 +163,7 @@ export const BlogPage: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/blog/${deleteId}`, { method: "DELETE", credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/blog/${deleteId}`, { method: "DELETE", credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         success("Post deleted");
@@ -179,7 +180,7 @@ export const BlogPage: React.FC = () => {
   // ── Toggle published ──────────────────────────────────────────
   const togglePublished = async (post: BlogPost) => {
     try {
-      const res = await fetch(`/api/admin/blog/${post.id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/blog/${post.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

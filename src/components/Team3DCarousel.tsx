@@ -29,20 +29,28 @@ export const Team3DCarousel: React.FC<Team3DCarouselProps> = ({
 
   const total = members.length;
 
+  // Exactly one highlighted card: the one currently nearest the viewer.
+  let frontIndex = 0;
+  for (let k = 1; k < total; k++) {
+    if (Math.cos(angle + (k * 2 * Math.PI) / total) > Math.cos(angle + (frontIndex * 2 * Math.PI) / total)) {
+      frontIndex = k;
+    }
+  }
+
   // Responsive radius carefully calibrated so cards fit on mobile screens without clipping
-  const [radius, setRadius] = useState({ rx: 460, rz: 130 });
+  const [radius, setRadius] = useState({ rx: 460, rz: 130, tilt: 24 });
 
   useEffect(() => {
     const updateDimensions = () => {
       const w = window.innerWidth;
       if (w < 400) {
-        setRadius({ rx: 95, rz: 45 });
+        setRadius({ rx: 150, rz: 120, tilt: 8 });
       } else if (w < 640) {
-        setRadius({ rx: 120, rz: 60 });
+        setRadius({ rx: 175, rz: 130, tilt: 8 });
       } else if (w < 1024) {
-        setRadius({ rx: 300, rz: 95 });
+        setRadius({ rx: 300, rz: 110, tilt: 18 });
       } else {
-        setRadius({ rx: 460, rz: 130 });
+        setRadius({ rx: 460, rz: 130, tilt: 24 });
       }
     };
     updateDimensions();
@@ -70,12 +78,25 @@ export const Team3DCarousel: React.FC<Team3DCarouselProps> = ({
         setAngle(angleRef.current);
       }
 
-      animFrameRef.current = requestAnimationFrame(loop);
+      animFrameRef.current = isVisible ? requestAnimationFrame(loop) : null;
     };
+
+    // Each frame re-renders every card, so only spin while the carousel is on screen.
+    let isVisible = true;
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (isVisible && !animFrameRef.current) {
+        lastTime = performance.now();
+        animFrameRef.current = requestAnimationFrame(loop);
+      }
+    });
+    if (containerRef.current) observer.observe(containerRef.current);
 
     animFrameRef.current = requestAnimationFrame(loop);
     return () => {
+      observer.disconnect();
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
     };
   }, []);
 
@@ -156,11 +177,13 @@ export const Team3DCarousel: React.FC<Team3DCarouselProps> = ({
           const normZ = (cos + 1) / 2; // 0 = back, 1 = front
 
           const scale = 0.58 + 0.45 * normZ;
-          const opacity = 0.35 + 0.65 * normZ;
+          // Fade cards out as they rotate behind, so larger teams don't clutter the ring.
+          const opacity = Math.max(0, Math.min(1, (cos + 0.45) / 1.2));
           const zIndex = Math.round(normZ * 100);
-          const isFront = cos > 0.72;
+          const isFront = i === frontIndex;
 
-          const rotateY = -(sin * 24);
+          // Small screens: wider depth gap and less tilt so side cards never cut through the front card.
+          const rotateY = -(sin * radius.tilt);
 
           return (
             <div
@@ -174,14 +197,16 @@ export const Team3DCarousel: React.FC<Team3DCarouselProps> = ({
                 transform: `translate3d(${x}px, 0px, ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
                 zIndex,
                 opacity,
+                visibility: opacity < 0.02 ? "hidden" : "visible",
+                pointerEvents: opacity < 0.25 ? "none" : "auto",
                 filter: `brightness(${0.5 + 0.55 * normZ})`,
                 transition: isDraggingRef.current ? "none" : "filter 0.2s ease",
               }}
-              className={`absolute w-[180px] xs:w-[195px] sm:w-[245px] h-[285px] xs:h-[305px] sm:h-[350px] p-3 sm:p-4 rounded-2xl cursor-pointer backdrop-blur-xl transition-shadow duration-300 flex flex-col justify-between ${
+              className={`absolute w-[180px] xs:w-[195px] sm:w-[245px] h-[285px] xs:h-[305px] sm:h-[350px] p-3 sm:p-4 rounded-2xl cursor-pointer transition-shadow duration-300 flex flex-col justify-between ${
                 isDark
                   ? isFront
-                    ? "bg-[#06140a]/95 border-2 border-[#00ff66] shadow-[0_0_35px_rgba(0,255,102,0.35)] ring-1 ring-[#00ff66]/40"
-                    : "bg-[#040e06]/85 border border-[#00ff66]/20 hover:border-[#00ff66]/50 shadow-md"
+                    ? "bg-[#06140a] border-2 border-[#00ff66] shadow-[0_0_35px_rgba(0,255,102,0.35)] ring-1 ring-[#00ff66]/40"
+                    : "bg-[#040e06] border border-[#00ff66]/20 hover:border-[#00ff66]/50 shadow-md"
                   : isFront
                   ? "bg-white border-2 border-emerald-500 shadow-2xl"
                   : "bg-gray-50 border border-gray-200"
@@ -195,12 +220,12 @@ export const Team3DCarousel: React.FC<Team3DCarouselProps> = ({
                   }`}
                 >
                   <img
-                    src={member.photoUrl || "/assets/leaders/elston.jpg"}
+                    src={member.photoUrl || "/assets/leaders/placeholder.svg"}
                     alt={member.name}
                     draggable={false}
                     className="w-full h-full object-cover object-top pointer-events-none select-none"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/assets/leaders/elston.jpg";
+                      (e.target as HTMLImageElement).src = "/assets/leaders/placeholder.svg";
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />

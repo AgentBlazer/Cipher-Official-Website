@@ -10,7 +10,6 @@ import { EventsPage } from "./pages/EventsPage.tsx";
 import { ActivitiesPage } from "./pages/ActivitiesPage.tsx";
 import { DomainsPage } from "./pages/DomainsPage.tsx";
 import { ContentPage } from "./pages/ContentPage.tsx";
-import { ContributorsPage } from "./pages/ContributorsPage.tsx";
 import { ApplicationsPage } from "./pages/ApplicationsPage.tsx";
 import { MessagesPage } from "./pages/MessagesPage.tsx";
 import { MediaPage } from "./pages/MediaPage.tsx";
@@ -64,7 +63,6 @@ export const AdminApp: React.FC = () => {
               <Route path="events" element={<EventsPage />} />
               <Route path="activities" element={<ActivitiesPage />} />
               <Route path="domains" element={<DomainsPage />} />
-              <Route path="contributors" element={<ContributorsPage />} />
               <Route path="applications" element={<ApplicationsPage />} />
               <Route path="messages" element={<MessagesPage />} />
               <Route path="content" element={<ContentPage />} />

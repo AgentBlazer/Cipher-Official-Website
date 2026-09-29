@@ -1,3 +1,4 @@
+import { API_BASE } from "../../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Search, Check, X, ArrowUpDown, Eye, EyeOff, Loader2, Save, Sparkles } from "lucide-react";
 import { Modal } from "../components/Modal.tsx";
@@ -64,7 +65,7 @@ export const MembersPage: React.FC = () => {
 
   const loadHeaderSettings = async () => {
     try {
-      const res = await fetch("/api/public/content");
+      const res = await fetch(`${API_BASE}/api/public/content`);
       const data = await res.json();
       if (res.ok && data.map) {
         if (data.map.team_title) setHeaderTitle(data.map.team_title);
@@ -77,7 +78,7 @@ export const MembersPage: React.FC = () => {
   const saveHeaderSettings = async () => {
     try {
       setIsSavingHeader(true);
-      const res = await fetch("/api/admin/content/bulk", {
+      const res = await fetch(`${API_BASE}/api/admin/content/bulk`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -105,7 +106,7 @@ export const MembersPage: React.FC = () => {
   const loadMembers = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/members", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/members`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setMembers(data.data || []);
@@ -174,8 +175,8 @@ export const MembersPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       const url = editingMember
-        ? `/api/admin/members/${editingMember.id}`
-        : "/api/admin/members";
+        ? `${API_BASE}/api/admin/members/${editingMember.id}`
+        : `${API_BASE}/api/admin/members`;
       const method = editingMember ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -203,7 +204,7 @@ export const MembersPage: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/members/${deleteId}`, {
+      const res = await fetch(`${API_BASE}/api/admin/members/${deleteId}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -222,7 +223,7 @@ export const MembersPage: React.FC = () => {
 
   const toggleStatus = async (member: TeamMember) => {
     try {
-      const res = await fetch(`/api/admin/members/${member.id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/members/${member.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

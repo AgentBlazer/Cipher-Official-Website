@@ -18,10 +18,20 @@
     color: #f3f4f6;
   }
 
-  /* Custom cursor is ONLY hidden on elements inside the public site container */
+  /* Public site cursor: a plain CSS/SVG cursor drawn by the OS, so it never lags behind the mouse.
+     Green ring + dot, filled ring over clickable elements, text caret in form fields. */
   .public-site-cursor,
   .public-site-cursor * {
-    cursor: none !important;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='8' fill='none' stroke='%23030804' stroke-opacity='.55' stroke-width='3.5'/%3E%3Ccircle cx='12' cy='12' r='8' fill='none' stroke='%2300ff66' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%2300ff66' stroke='%23030804' stroke-opacity='.55'/%3E%3C/svg%3E") 12 12, auto !important;
+  }
+
+  .public-site-cursor :is(a, button, [role="button"], label, select, summary, .clickable-card, [data-cursor]),
+  .public-site-cursor :is(a, button, [role="button"], label, select, summary, .clickable-card, [data-cursor]) * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='10' fill='%2300ff66' fill-opacity='.2' stroke='%23030804' stroke-opacity='.55' stroke-width='3.5'/%3E%3Ccircle cx='14' cy='14' r='10' fill='none' stroke='%2300ff66' stroke-width='1.5'/%3E%3Ccircle cx='14' cy='14' r='2.5' fill='%2300ff66'/%3E%3C/svg%3E") 14 14, pointer !important;
+  }
+
+  .public-site-cursor :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), textarea) {
+    cursor: text !important;
   }
 
   /* Admin CMS always has standard visible cursor */

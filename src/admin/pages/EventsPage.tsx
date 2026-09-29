@@ -1,3 +1,4 @@
+import { API_BASE } from "../../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Search, Calendar, Image as ImageIcon, Eye, EyeOff, Loader2, PlusCircle, X, Save, Sparkles } from "lucide-react";
 import { Modal } from "../components/Modal.tsx";
@@ -79,7 +80,7 @@ export const EventsPage: React.FC = () => {
 
   const loadHeaderSettings = async () => {
     try {
-      const res = await fetch("/api/public/content");
+      const res = await fetch(`${API_BASE}/api/public/content`);
       const data = await res.json();
       if (res.ok && data.map) {
         if (data.map.events_badge) setHeaderBadge(data.map.events_badge);
@@ -92,7 +93,7 @@ export const EventsPage: React.FC = () => {
   const saveHeaderSettings = async () => {
     try {
       setIsSavingHeader(true);
-      const res = await fetch("/api/admin/content/bulk", {
+      const res = await fetch(`${API_BASE}/api/admin/content/bulk`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -120,7 +121,7 @@ export const EventsPage: React.FC = () => {
   const loadEvents = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/events", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/events`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setEvents(data.data || []);
@@ -213,7 +214,7 @@ export const EventsPage: React.FC = () => {
         fullDescription: fullDescArray,
       };
 
-      const url = editingEvent ? `/api/admin/events/${editingEvent.id}` : "/api/admin/events";
+      const url = editingEvent ? `${API_BASE}/api/admin/events/${editingEvent.id}` : `${API_BASE}/api/admin/events`;
       const method = editingEvent ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -241,7 +242,7 @@ export const EventsPage: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/events/${deleteId}`, {
+      const res = await fetch(`${API_BASE}/api/admin/events/${deleteId}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -257,7 +258,7 @@ export const EventsPage: React.FC = () => {
 
   const togglePublish = async (ev: EventItem) => {
     try {
-      const res = await fetch(`/api/admin/events/${ev.id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/events/${ev.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -275,7 +276,7 @@ export const EventsPage: React.FC = () => {
   const toggleFeaturedOnHome = async (ev: EventItem) => {
     try {
       const nextVal = ev.featuredOnHome === false ? true : false;
-      const res = await fetch(`/api/admin/events/${ev.id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/events/${ev.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../lib/api.ts";
 import { Upload, Trash2, Copy, Check, ExternalLink, Image as ImageIcon, Loader2 } from "lucide-react";
 import { ImageUploader } from "../components/ImageUploader.tsx";
 import { ConfirmDialog } from "../components/ConfirmDialog.tsx";
@@ -26,7 +27,7 @@ export const MediaPage: React.FC = () => {
   const loadMedia = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/media", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/media`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setAssets(data.data || []);
@@ -52,7 +53,7 @@ export const MediaPage: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/media/${deleteId}`, {
+      const res = await fetch(`${API_BASE}/api/admin/media/${deleteId}`, {
         method: "DELETE",
         credentials: "include",
       });

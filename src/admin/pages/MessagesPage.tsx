@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useState } from "react";
+import { API_BASE } from "../../lib/api.ts";
 import { Mail, Trash2, CheckCircle, Clock, RefreshCw, Inbox } from "lucide-react";
 
 interface ContactMessage {
@@ -19,8 +20,9 @@ export const MessagesPage: React.FC = () => {
 
   const fetchMessages = () => {
     setLoading(true);
-    fetch("/api/admin/messages", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+    fetch(`${API_BASE}/api/admin/messages`, {
+      credentials: "include",
+      headers: { Authorization: `Bearer ${localStorage.getItem("cipher_token")}` },
     })
       .then((r) => r.json())
       .then((d) => { setMessages(d.data || []); setLoading(false); })
@@ -30,18 +32,20 @@ export const MessagesPage: React.FC = () => {
   useEffect(() => { fetchMessages(); }, []);
 
   const markRead = async (id: string) => {
-    await fetch(`/api/admin/messages/${id}/read`, {
+    await fetch(`${API_BASE}/api/admin/messages/${id}/read`, {
       method: "PATCH",
-      headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+      credentials: "include",
+      headers: { Authorization: `Bearer ${localStorage.getItem("cipher_token")}` },
     });
     fetchMessages();
   };
 
   const deleteMsg = async (id: string) => {
     if (!window.confirm("Delete this message?")) return;
-    await fetch(`/api/admin/messages/${id}`, {
+    await fetch(`${API_BASE}/api/admin/messages/${id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+      credentials: "include",
+      headers: { Authorization: `Bearer ${localStorage.getItem("cipher_token")}` },
     });
     if (selected?.id === id) setSelected(null);
     fetchMessages();

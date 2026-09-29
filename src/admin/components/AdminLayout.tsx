@@ -15,7 +15,6 @@ export const AdminLayout: React.FC = () => {
       events: "Events & Workshops",
       activities: "Activities Archive",
       domains: "Domains & Pillars",
-      contributors: "Event Contributors",
       applications: "Join Requests",
       messages: "Contact Messages",
       content: "Website Content Editor",

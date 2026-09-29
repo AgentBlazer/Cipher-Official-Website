@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -154,25 +155,6 @@ model MediaAsset {
   format    String?
   sizeBytes Int?
   createdAt DateTime @default(now())
-}
-
-model Contributor {
-  id           String   @id @default(cuid())
-  name         String
-  role         String   // e.g. "Technical Coordinator", "Event Host", "Volunteer Lead"
-  eventName    String   // e.g. "Prompt Ops-2K26", "Lumière Gala"
-  department   String   @default("Computer Science & Engineering")
-  batch        String?  // e.g. "3rd Year CSE", "Batch 2026"
-  photoUrl     String?
-  modalPhotoUrl String?
-  bio          String?
-  github       String?
-  linkedin     String?
-  instagram    String?
-  displayOrder Int      @default(0)
-  isPublished  Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 }
 
 model JoinApplication {

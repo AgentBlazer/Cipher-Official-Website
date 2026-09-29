@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, MapPin, ArrowRight, Trophy, BookOpen, Sparkles, Layers, ArrowUpRight } from "lucide-react";
@@ -85,7 +86,7 @@ export const HomeEvents: React.FC = () => {
   useEffect(() => {
     async function loadFeaturedEvents() {
       try {
-        const res = await fetch("/api/public/events");
+        const res = await fetch(`${API_BASE}/api/public/events`);
         if (res.ok) {
           const json = await res.json();
           if (Array.isArray(json.data) && json.data.length > 0) {

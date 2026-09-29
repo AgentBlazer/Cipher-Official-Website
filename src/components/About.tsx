@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect, useRef } from "react";
 import { useScrambleText } from "../hooks/useScrambleText.ts";
 import { useTheme } from "../context/ThemeContext.tsx";
@@ -13,42 +14,42 @@ const DEFAULT_ABOUT_PHOTOS = [
 const PHOTO_PRESETS = [
   // 1: Top-Left
   {
-    posClass: "-top-2 -left-1 sm:top-0 sm:left-2 w-32 xs:w-36 sm:w-52 h-24 xs:h-26 sm:h-36 z-10",
+    posClass: "-top-2 -left-1 sm:top-0 sm:left-2 w-32 sm:w-52 h-24 sm:h-36 z-10",
     rotate: "-6deg",
   },
   // 2: Bottom-Right
   {
-    posClass: "-bottom-2 -right-1 sm:bottom-1 sm:right-2 w-34 xs:w-38 sm:w-56 h-26 xs:h-30 sm:h-40 z-10",
+    posClass: "-bottom-2 -right-1 sm:bottom-1 sm:right-2 w-[8.5rem] sm:w-56 h-[6.5rem] sm:h-40 z-10",
     rotate: "4deg",
   },
   // 3: Bottom-Left
   {
-    posClass: "-bottom-2 left-2 sm:bottom-0 sm:left-10 w-28 xs:w-32 sm:w-48 h-22 xs:h-24 sm:h-32 z-10",
+    posClass: "-bottom-2 left-2 sm:bottom-0 sm:left-10 w-28 sm:w-48 h-[5.5rem] sm:h-32 z-10",
     rotate: "-3deg",
   },
   // 4: Top-Right
   {
-    posClass: "-top-2 right-1 sm:top-2 sm:right-6 w-30 xs:w-34 sm:w-48 h-22 xs:h-26 sm:h-34 z-10",
+    posClass: "-top-2 right-1 sm:top-2 sm:right-6 w-[7.5rem] sm:w-48 h-[5.5rem] sm:h-[8.5rem] z-10",
     rotate: "6deg",
   },
   // 5: Far-Left Perimeter
   {
-    posClass: "top-1/4 -left-3 sm:-left-4 w-26 xs:w-30 sm:w-44 h-20 xs:h-22 sm:h-30 z-10",
+    posClass: "top-1/4 -left-3 sm:-left-4 w-[6.5rem] sm:w-44 h-20 sm:h-[7.5rem] z-10",
     rotate: "-5deg",
   },
   // 6: Far-Right Perimeter
   {
-    posClass: "top-1/3 -right-3 sm:-right-4 w-28 xs:w-32 sm:w-46 h-20 xs:h-24 sm:h-32 z-10",
+    posClass: "top-1/3 -right-3 sm:-right-4 w-28 sm:w-[11.5rem] h-20 sm:h-32 z-10",
     rotate: "5deg",
   },
   // 7: Bottom-Center Low
   {
-    posClass: "bottom-0 left-1/3 w-28 xs:w-32 sm:w-48 h-20 xs:h-24 sm:h-32 z-10",
+    posClass: "bottom-0 left-1/3 w-28 sm:w-48 h-20 sm:h-32 z-10",
     rotate: "-2deg",
   },
   // 8: Top-Center High
   {
-    posClass: "-top-1 left-1/3 w-28 xs:w-32 sm:w-44 h-20 xs:h-22 sm:h-30 z-10",
+    posClass: "-top-1 left-1/3 w-28 sm:w-44 h-20 sm:h-[7.5rem] z-10",
     rotate: "3deg",
   },
 ];
@@ -60,6 +61,12 @@ export const About: React.FC = () => {
   const { displayText, ref } = useScrambleText(aboutTitle);
   const sectionRef = useRef<HTMLElement>(null);
   const [isInView, setIsInView] = useState(false);
+  // Card under the pointer (or last tapped on touch screens) pops up in front of the others.
+  const [hovered, setHovered] = useState<number | null>(null);
+  // Touch taps also fire mouseenter, so hover handlers only apply on real hover devices and taps toggle instead.
+  const [canHover] = useState(() => window.matchMedia("(hover: hover)").matches);
+  // True once the staggered entrance has finished, so hover transitions run instantly without its delays.
+  const [entered, setEntered] = useState(false);
 
   const [aboutText, setAboutText] = useState(
     "CIPHER is the student association of the Department of Computer Science & Engineering. It serves as a platform for students to nurture their technical and interpersonal skills through innovative and collaborative activities. The association strives to bridge the gap between academic knowledge and practical application, fostering a community of aspiring professionals dedicated to excellence in computing."
@@ -71,7 +78,7 @@ export const About: React.FC = () => {
   useEffect(() => {
     async function fetchContent() {
       try {
-        const res = await fetch("/api/public/content");
+        const res = await fetch(`${API_BASE}/api/public/content`);
         if (res.ok) {
           const json = await res.json();
           if (json.map?.about_title) {
@@ -135,6 +142,16 @@ export const About: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!isInView) {
+      setEntered(false);
+      setHovered(null);
+      return;
+    }
+    const timer = setTimeout(() => setEntered(true), (photos.length - 1) * 130 + 700);
+    return () => clearTimeout(timer);
+  }, [isInView, photos.length]);
+
   return (
     <section ref={sectionRef} id="about" className="relative py-8 sm:py-12 md:py-14 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
@@ -174,18 +191,29 @@ export const About: React.FC = () => {
             <div className="relative z-10 w-full max-w-lg h-[400px] sm:h-[440px] flex items-center justify-center pointer-events-none">
               {photos.map((src, i) => {
                 const preset = PHOTO_PRESETS[i % PHOTO_PRESETS.length];
-                const delayMs = i * 130;
+                const delayMs = entered ? 0 : i * 130;
+                const isHovered = hovered === i;
 
                 return (
                   <div
                     key={`${src}-${i}`}
-                    className={`absolute ${preset.posClass} rounded-xl overflow-hidden border border-[#00ff66]/30 shadow-[0_12px_30px_rgba(0,0,0,0.85)] group pointer-events-auto cursor-pointer`}
+                    onMouseEnter={canHover ? () => setHovered(i) : undefined}
+                    onMouseLeave={canHover ? () => setHovered((h) => (h === i ? null : h)) : undefined}
+                    onClick={canHover ? undefined : () => setHovered((h) => (h === i ? null : i))}
+                    className={`absolute ${preset.posClass} rounded-xl overflow-hidden border group pointer-events-auto cursor-pointer ${
+                      isHovered
+                        ? "border-[#00ff66] shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_28px_rgba(0,255,102,0.45)]"
+                        : "border-[#00ff66]/30 shadow-[0_12px_30px_rgba(0,0,0,0.85)]"
+                    }`}
                     style={{
-                      transform: isInView
-                        ? `scale(1) rotate(${preset.rotate}) translateY(0px)`
-                        : "scale(0) rotate(0deg) translateY(30px)",
+                      transform: !isInView
+                        ? "scale(0) rotate(0deg) translateY(30px)"
+                        : isHovered
+                        ? "scale(1.35) rotate(0deg) translateY(-8px)"
+                        : `scale(1) rotate(${preset.rotate}) translateY(0px)`,
                       opacity: isInView ? 1 : 0,
-                      transition: `transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) ${delayMs}ms, opacity 0.45s ease ${delayMs}ms, box-shadow 0.3s ease, border-color 0.3s ease`,
+                      zIndex: isHovered ? 30 : undefined,
+                      transition: `transform ${entered ? "0.3s" : "0.65s"} cubic-bezier(0.34, 1.56, 0.64, 1) ${delayMs}ms, opacity 0.45s ease ${delayMs}ms, box-shadow 0.3s ease, border-color 0.3s ease`,
                       willChange: "transform, opacity",
                     }}
                   >
@@ -200,7 +228,7 @@ export const About: React.FC = () => {
                       src={src}
                       alt={`Cipher initiative ${i + 1}`}
                       draggable={false}
-                      className="w-full h-full object-cover select-none pointer-events-none transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover select-none pointer-events-none"
                       style={{
                         WebkitUserDrag: "none",
                         userSelect: "none",

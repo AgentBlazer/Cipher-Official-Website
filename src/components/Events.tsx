@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from 'react';
 import { Calendar } from 'lucide-react';
 import { useScrambleText } from '../hooks/useScrambleText.ts';
@@ -25,8 +26,6 @@ const DEFAULT_EVENTS: EventData[] = [
       '/assets/lumiere/slide_04.jpg',
       '/assets/lumiere/slide_05.jpg',
       '/assets/lumiere/slide_06.jpg',
-      '/assets/lumiere/slide_07.jpg',
-      '/assets/lumiere/slide_08.jpg',
     ]
   },
   {
@@ -52,7 +51,6 @@ const DEFAULT_EVENTS: EventData[] = [
       '/assets/promptops/slide_05.jpg',
       '/assets/promptops/slide_06.jpg',
       '/assets/promptops/slide_07.jpg',
-      '/assets/promptops/slide_08.jpg',
     ]
   }
 ];
@@ -65,7 +63,7 @@ export const Events: React.FC = () => {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const res = await fetch('/api/public/events');
+        const res = await fetch(`${API_BASE}/api/public/events`);
         if (res.ok) {
           const json = await res.json();
           if (json.success && Array.isArray(json.data) && json.data.length > 0) {

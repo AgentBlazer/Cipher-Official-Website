@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import {
   BookOpen, Clock, Tag, User, Search, ArrowRight, X,
@@ -152,7 +153,7 @@ export const BlogPage: React.FC = () => {
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const res = await fetch("/api/public/blog");
+        const res = await fetch(`${API_BASE}/api/public/blog`);
         if (res.ok) {
           const json = await res.json();
           if (Array.isArray(json.data) && json.data.length > 0) {

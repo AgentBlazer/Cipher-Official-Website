@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext.tsx';
@@ -19,7 +20,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenJoinModal, onOpenRootAccess })
   useEffect(() => {
     async function fetchContent() {
       try {
-        const res = await fetch('/api/public/content');
+        const res = await fetch(`${API_BASE}/api/public/content`);
         if (res.ok) {
           const json = await res.json();
           if (json.map) {

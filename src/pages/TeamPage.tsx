@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Team3DCarousel } from "../components/Team3DCarousel.tsx";
 import { DecryptedProfileModal } from "../components/DecryptedProfileModal.tsx";
@@ -23,7 +24,7 @@ export const TeamPage: React.FC = () => {
 
   useEffect(() => {
     // Fetch dynamic site content for header customizations
-    fetch("/api/public/content")
+    fetch(`${API_BASE}/api/public/content`)
       .then((res) => (res.ok ? res.json() : null))
       .then((json) => {
         if (json?.map) {
@@ -36,7 +37,7 @@ export const TeamPage: React.FC = () => {
 
     async function fetchMembers() {
       try {
-        const res = await fetch("/api/public/members");
+        const res = await fetch(`${API_BASE}/api/public/members`);
         if (res.ok) {
            const json = await res.json();
           if (Array.isArray(json.data) && json.data.length > 0) {
@@ -47,7 +48,7 @@ export const TeamPage: React.FC = () => {
               department: m.department || "Computer Science & Engineering",
               teamYear: m.teamYear || "2025-26",
               bio: m.bio || "",
-              photoUrl: m.photoUrl || "/assets/leaders/elston.jpg",
+              photoUrl: m.photoUrl || "/assets/leaders/placeholder.svg",
               modalPhotoUrl: m.modalPhotoUrl || m.photoUrl,
               github: m.github || "",
               linkedin: m.linkedin || "",

@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../lib/api.ts";
 import { Plus, Edit2, Trash2, Search, ExternalLink, Github, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Modal } from "../components/Modal.tsx";
 import { ConfirmDialog } from "../components/ConfirmDialog.tsx";
@@ -49,7 +50,7 @@ export const ProjectsPage: React.FC = () => {
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/projects", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/projects`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setProjects(data.data || []);
@@ -127,8 +128,8 @@ export const ProjectsPage: React.FC = () => {
       };
 
       const url = editingProject
-        ? `/api/admin/projects/${editingProject.id}`
-        : "/api/admin/projects";
+        ? `${API_BASE}/api/admin/projects/${editingProject.id}`
+        : `${API_BASE}/api/admin/projects`;
       const method = editingProject ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -156,7 +157,7 @@ export const ProjectsPage: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/projects/${deleteId}`, {
+      const res = await fetch(`${API_BASE}/api/admin/projects/${deleteId}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -172,7 +173,7 @@ export const ProjectsPage: React.FC = () => {
 
   const togglePublish = async (project: Project) => {
     try {
-      const res = await fetch(`/api/admin/projects/${project.id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/projects/${project.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

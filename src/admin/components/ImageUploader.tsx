@@ -1,4 +1,5 @@
 ﻿import React, { useState, useRef } from "react";
+import { API_BASE } from "../../lib/api.ts";
 import { Upload, X, Image as ImageIcon, Link as LinkIcon, Loader2 } from "lucide-react";
 import { useToast } from "../context/ToastContext.tsx";
 
@@ -36,7 +37,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     formData.append("file", file);
 
     try {
-      const res = await fetch("/api/admin/media/upload", {
+      const res = await fetch(`${API_BASE}/api/admin/media/upload`, {
         method: "POST",
         credentials: "include",
         headers: {

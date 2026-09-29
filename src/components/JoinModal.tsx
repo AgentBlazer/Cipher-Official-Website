@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState } from "react";
 import { X, CheckCircle2, Loader2, Sparkles, Send, Shield } from "lucide-react";
 
@@ -31,7 +32,7 @@ export const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
     setErrorMessage("");
 
     try {
-      const res = await fetch("/api/public/join", {
+      const res = await fetch(`${API_BASE}/api/public/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

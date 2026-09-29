@@ -1,3 +1,4 @@
+import { API_BASE } from "../../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Save, Loader2, Plus, Trash2, Image as ImageIcon, Sparkles } from "lucide-react";
 import { useToast } from "../context/ToastContext.tsx";
@@ -34,7 +35,7 @@ export const ContentPage: React.FC = () => {
   const loadContent = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/content", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/content`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setItems(data.data || []);
@@ -133,7 +134,7 @@ export const ContentPage: React.FC = () => {
         value: finalValues[key],
       }));
 
-      const res = await fetch("/api/admin/content/bulk", {
+      const res = await fetch(`${API_BASE}/api/admin/content/bulk`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

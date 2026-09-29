@@ -18,11 +18,12 @@ import domainsRoutes from "./routes/domains.routes.js";
 import contentRoutes from "./routes/content.routes.js";
 import mediaRoutes from "./routes/media.routes.js";
 import blogRoutes from "./routes/blog.routes.js";
-import contributorsRoutes from "./routes/contributors.routes.js";
 import applicationsRoutes from "./routes/applications.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 
 const app = express();
+// Behind Vercel's proxy: needed for correct client IPs (login rate limiting).
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 4000;
 
 // Middleware
@@ -90,7 +91,6 @@ app.use("/api/admin/domains", domainsRoutes);
 app.use("/api/admin/content", contentRoutes);
 app.use("/api/admin/media", mediaRoutes);
 app.use("/api", blogRoutes); // handles /api/public/blog and /api/admin/blog
-app.use("/api", contributorsRoutes); // handles /api/public/contributors and /api/admin/contributors
 app.use("/api", applicationsRoutes); // handles /api/public/join and /api/admin/applications
 app.use("/api", contactRoutes); // handles /api/public/contact and /api/admin/messages
 
@@ -105,7 +105,8 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   });
 });
 
-if (process.env.NODE_ENV !== "test") {
+// On Vercel the app is served as a serverless function (server/api/index.ts), so no listener there.
+if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`[Cipher API] Server running on http://localhost:${PORT}`);
   });

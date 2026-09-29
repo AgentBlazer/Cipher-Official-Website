@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { useScrambleText } from '../hooks/useScrambleText.ts';
@@ -36,7 +37,7 @@ export const Activities: React.FC = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/public/activities');
+        const res = await fetch(`${API_BASE}/api/public/activities`);
         if (res.ok) {
           const json = await res.json();
           if (json.success && Array.isArray(json.data) && json.data.length > 0) {
@@ -68,7 +69,7 @@ export const Activities: React.FC = () => {
       } catch {}
 
       try {
-        const cRes = await fetch('/api/public/content');
+        const cRes = await fetch(`${API_BASE}/api/public/content`);
         if (cRes.ok) {
           const cJson = await cRes.json();
           if (cJson.map?.activities_desc) {

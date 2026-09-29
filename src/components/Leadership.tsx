@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
@@ -16,7 +17,7 @@ export const Leadership: React.FC = () => {
   useEffect(() => {
     async function fetchLeaders() {
       try {
-        const res = await fetch("/api/public/members");
+        const res = await fetch(`${API_BASE}/api/public/members`);
         if (res.ok) {
           const json = await res.json();
           if (json.success && Array.isArray(json.data) && json.data.length > 0) {
@@ -27,7 +28,7 @@ export const Leadership: React.FC = () => {
               department: m.department || "Computer Science & Engineering",
               teamYear: m.teamYear || "2025-26",
               bio: m.bio || "",
-              photoUrl: m.photoUrl || "/assets/leaders/elston.jpg",
+              photoUrl: m.photoUrl || "/assets/leaders/placeholder.svg",
               modalPhotoUrl: m.modalPhotoUrl || m.photoUrl,
               github: m.github || "",
               linkedin: m.linkedin || "",

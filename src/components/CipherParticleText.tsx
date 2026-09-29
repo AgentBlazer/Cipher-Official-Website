@@ -43,6 +43,42 @@ export const CipherParticleText: React.FC = () => {
 
     const particles: Particle[] = [];
 
+    // Glowing glyphs are pre-rendered once per (char, colour, glow) combination.
+    // Drawing text with shadowBlur for every particle on every frame is what made the hero lag.
+    const spriteCache = new Map<string, HTMLCanvasElement>();
+    let spriteDpr = 1;
+
+    const getSprite = (
+      char: string,
+      size: number,
+      fill: string,
+      shadow: string,
+      blur: number
+    ) => {
+      const key = `${char}|${size}|${fill}|${shadow}|${blur}`;
+      let sprite = spriteCache.get(key);
+      if (sprite) return sprite;
+
+      const pad = Math.ceil(blur * 2) + 2;
+      const cssSize = size + pad * 2;
+      sprite = document.createElement("canvas");
+      sprite.width = Math.ceil(cssSize * spriteDpr);
+      sprite.height = Math.ceil(cssSize * spriteDpr);
+      const sctx = sprite.getContext("2d");
+      if (sctx) {
+        sctx.scale(spriteDpr, spriteDpr);
+        sctx.font = `${size}px monospace`;
+        sctx.textAlign = "center";
+        sctx.textBaseline = "middle";
+        sctx.fillStyle = fill;
+        sctx.shadowColor = shadow;
+        sctx.shadowBlur = blur;
+        sctx.fillText(char, cssSize / 2, cssSize / 2);
+      }
+      spriteCache.set(key, sprite);
+      return sprite;
+    };
+
     const mouse = {
       x: -2000,
       y: -2000,
@@ -74,6 +110,8 @@ export const CipherParticleText: React.FC = () => {
       canvas.height = Math.round(height * dpr);
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      spriteDpr = dpr;
+      spriteCache.clear();
 
       offscreen.width = Math.round(width);
       offscreen.height = Math.round(height);
@@ -205,7 +243,18 @@ export const CipherParticleText: React.FC = () => {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // While the text is settled and the mouse is away only the slow shimmer animates,
+    // so drop to ~30fps; interaction runs at full frame rate.
+    let lastDraw = 0;
+    let anyMoving = false;
+
     const draw = (time: number) => {
+      if (!mouse.active && !anyMoving && time - lastDraw < 1000 / 30 - 1) {
+        animationFrame = isOnScreen ? requestAnimationFrame(draw) : 0;
+        return;
+      }
+      lastDraw = time;
+      anyMoving = false;
       ctx.clearRect(0, 0, width, height);
       const isDark = themeRef.current === "dark";
 
@@ -267,6 +316,7 @@ export const CipherParticleText: React.FC = () => {
 
         p.x += p.vx;
         p.y += p.vy;
+        if (p.vx !== 0 || p.vy !== 0) anyMoving = true;
 
         // Snap precisely once settled to eliminate idle micro-jitter
         if (
@@ -289,41 +339,42 @@ export const CipherParticleText: React.FC = () => {
           alpha = Math.min(1, alpha + 0.25);
         }
 
-        ctx.globalAlpha = alpha;
-        ctx.font = `${p.size}px monospace`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        let fill: string;
+        let shadow: string;
+        let blur: number;
 
         if (isDark) {
           if (p.brightness > 0.88) {
             // Bright luminous matrix highlight glyphs seen in reference image
-            ctx.fillStyle = "#bbf7d0";
-            ctx.shadowColor = "#00ff88";
-            ctx.shadowBlur = isDisplaced ? 8 : 4;
+            fill = "#bbf7d0";
+            shadow = "#00ff88";
+            blur = isDisplaced ? 8 : 4;
           } else if (p.colorVariation === "neon") {
-            ctx.fillStyle = "#00ff88";
-            ctx.shadowColor = "#00ff66";
-            ctx.shadowBlur = isDisplaced ? 6 : 2;
+            fill = "#00ff88";
+            shadow = "#00ff66";
+            blur = isDisplaced ? 6 : 2;
           } else if (p.colorVariation === "emerald") {
-            ctx.fillStyle = "#10b981";
-            ctx.shadowColor = "#10b981";
-            ctx.shadowBlur = isDisplaced ? 5 : 1;
+            fill = "#10b981";
+            shadow = "#10b981";
+            blur = isDisplaced ? 5 : 1;
           } else {
-            ctx.fillStyle = "#34d399";
-            ctx.shadowColor = "#00ff66";
-            ctx.shadowBlur = isDisplaced ? 5 : 2;
+            fill = "#34d399";
+            shadow = "#00ff66";
+            blur = isDisplaced ? 5 : 2;
           }
         } else {
-          ctx.fillStyle = p.brightness > 0.85 ? "#047857" : "#059669";
-          ctx.shadowColor = "#059669";
-          ctx.shadowBlur = isDisplaced ? 4 : 1;
+          fill = p.brightness > 0.85 ? "#047857" : "#059669";
+          shadow = "#059669";
+          blur = isDisplaced ? 4 : 1;
         }
 
-        ctx.fillText(p.char, p.x, p.y);
+        const sprite = getSprite(p.char, p.size, fill, shadow, blur);
+        const spriteSize = sprite.width / spriteDpr;
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(sprite, p.x - spriteSize / 2, p.y - spriteSize / 2, spriteSize, spriteSize);
       }
 
       ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
 
       // Decay stale cursor velocity
       if (performance.now() - mouse.lastTime > 90) {
@@ -331,8 +382,16 @@ export const CipherParticleText: React.FC = () => {
         mouse.vy *= 0.6;
       }
 
-      animationFrame = requestAnimationFrame(draw);
+      animationFrame = isOnScreen ? requestAnimationFrame(draw) : 0;
     };
+
+    // Stop animating once the hero is scrolled out of view.
+    let isOnScreen = true;
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isOnScreen = entry.isIntersecting;
+      if (isOnScreen && !animationFrame) animationFrame = requestAnimationFrame(draw);
+    });
+    visibilityObserver.observe(canvas);
 
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseleave", handleMouseLeave);
@@ -348,6 +407,7 @@ export const CipherParticleText: React.FC = () => {
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
       resizeObserver.disconnect();
+      visibilityObserver.disconnect();
     };
   }, []);
 

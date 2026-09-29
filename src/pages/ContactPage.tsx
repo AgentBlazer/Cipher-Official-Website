@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -23,7 +24,7 @@ const ContactForm: React.FC = () => {
     setStatus("loading");
     setError("");
     try {
-      const res = await fetch("/api/public/contact", {
+      const res = await fetch(`${API_BASE}/api/public/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -134,7 +135,7 @@ const JoinForm: React.FC = () => {
     setStatus("loading");
     setError("");
     try {
-      const res = await fetch("/api/public/join", {
+      const res = await fetch(`${API_BASE}/api/public/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -303,20 +304,20 @@ export const ContactPage: React.FC = () => {
           <div className="space-y-4">
             {/* Info strip */}
             <div className="border border-emerald-200 dark:border-[#00ff66]/20 rounded-xl p-4 bg-emerald-50/60 dark:bg-[#040c06]/40 text-emerald-800 dark:text-[#a0c0a8] text-xs sm:text-sm leading-relaxed font-medium">
-              Applications are reviewed by the Cipher council. Shortlisted candidates will be contacted via email.
+              Applications are reviewed by the Cipher council. Shortlisted candidates will be contacted by the Cipher council.
               <span className="text-emerald-700 dark:text-[#00ff66] font-bold ml-1">All backgrounds welcome.</span>
             </div>
             <JoinForm />
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Direct email card */}
-            <div className="border border-gray-200 dark:border-[#00ff66]/20 rounded-2xl p-5 bg-white dark:bg-[#040c06]/60 flex items-center justify-between shadow-sm dark:shadow-none">
+            {/* How messages are handled: they go straight to the council's admin panel, no club email */}
+            <div className="border border-gray-200 dark:border-[#00ff66]/20 rounded-2xl p-5 bg-white dark:bg-[#040c06]/60 flex items-center justify-between gap-4 shadow-sm dark:shadow-none">
               <div>
-                <div className="text-[11px] font-semibold text-gray-500 dark:text-[#88aa90] tracking-wider uppercase mb-1">Direct Email</div>
-                <a href="mailto:cipher@sjec.ac.in" className="text-emerald-600 dark:text-[#00ff66] font-bold text-sm sm:text-base hover:underline">
-                  cipher@sjec.ac.in
-                </a>
+                <div className="text-[11px] font-semibold text-gray-500 dark:text-[#88aa90] tracking-wider uppercase mb-1">Direct to the Council</div>
+                <p className="text-gray-800 dark:text-[#d0e8d6] font-medium text-sm sm:text-base">
+                  Your message goes straight to the Cipher council. We&apos;ll get back to you using the details you share below.
+                </p>
               </div>
               <div className="text-gray-500 dark:text-[#88aa90] text-xs text-right">
                 Replies within<br /><span className="text-gray-900 dark:text-white font-bold">24-48 hrs</span>

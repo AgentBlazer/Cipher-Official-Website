@@ -1,3 +1,4 @@
+import { API_BASE } from "../../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Search, Eye, EyeOff, Loader2, Layers, Image as ImageIcon, X, Calendar } from "lucide-react";
 import { Modal } from "../components/Modal.tsx";
@@ -43,7 +44,7 @@ export const ActivitiesPage: React.FC = () => {
   const loadActivities = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/activities", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/activities`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setActivities(data.data || []);
@@ -118,8 +119,8 @@ export const ActivitiesPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       const url = editingActivity
-        ? `/api/admin/activities/${editingActivity.id}`
-        : "/api/admin/activities";
+        ? `${API_BASE}/api/admin/activities/${editingActivity.id}`
+        : `${API_BASE}/api/admin/activities`;
       const method = editingActivity ? "PUT" : "POST";
 
       const photoPayload = formData.photos.length > 0 ? JSON.stringify(formData.photos) : null;
@@ -159,7 +160,7 @@ export const ActivitiesPage: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/activities/${deleteId}`, {
+      const res = await fetch(`${API_BASE}/api/admin/activities/${deleteId}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -175,7 +176,7 @@ export const ActivitiesPage: React.FC = () => {
 
   const togglePublish = async (act: Activity) => {
     try {
-      const res = await fetch(`/api/admin/activities/${act.id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/activities/${act.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

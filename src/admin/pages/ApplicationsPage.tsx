@@ -1,3 +1,4 @@
+import { API_BASE } from "../../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import {
   UserCheck, Search, Mail, Phone, GraduationCap, Clock,
@@ -59,7 +60,7 @@ export const ApplicationsPage: React.FC = () => {
   const load = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/applications", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/applications`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setApplications(data.data || []);
@@ -77,7 +78,7 @@ export const ApplicationsPage: React.FC = () => {
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
-      const res = await fetch(`/api/admin/applications/${id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/applications/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -97,7 +98,7 @@ export const ApplicationsPage: React.FC = () => {
 
   const saveNotes = async (id: string) => {
     try {
-      const res = await fetch(`/api/admin/applications/${id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/applications/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -117,7 +118,7 @@ export const ApplicationsPage: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/applications/${deleteId}`, {
+      const res = await fetch(`${API_BASE}/api/admin/applications/${deleteId}`, {
         method: "DELETE",
         credentials: "include",
       });

@@ -61,8 +61,12 @@ export const DecryptedProfileModal: React.FC<DecryptedProfileModalProps> = ({
       const elapsed = timestamp - startTime;
       const progress = Math.min(1, elapsed / TOTAL_DURATION);
 
-      const width = (canvas.width = canvas.offsetWidth || 280);
-      const height = (canvas.height = canvas.offsetHeight || 360);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = canvas.offsetWidth || 280;
+      const height = canvas.offsetHeight || 360;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       // Background color depending on mode
       ctx.fillStyle = isDark ? "#030a05" : "#f8fafc";
@@ -155,8 +159,18 @@ export const DecryptedProfileModal: React.FC<DecryptedProfileModalProps> = ({
       }
     };
 
-    animFrameRef.current = requestAnimationFrame(render);
+    // Start the reveal only once the photo has loaded (or failed), so it never ends on an empty frame.
+    let cancelled = false;
+    const start = () => {
+      if (!cancelled) animFrameRef.current = requestAnimationFrame(render);
+    };
+    if (img.complete) start();
+    else {
+      img.onload = start;
+      img.onerror = start;
+    }
     return () => {
+      cancelled = true;
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
   }, [member, isDark]);

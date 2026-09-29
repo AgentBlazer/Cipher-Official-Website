@@ -24,6 +24,11 @@ export const TopographicBackground: React.FC = () => {
       if (!canvas) return;
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      // Resizing clears the canvas; with reduced motion there is no loop to repaint it.
+      if (prefersReducedMotion) {
+        lastDraw = 0;
+        draw();
+      }
     };
 
     window.addEventListener('resize', handleResize);
@@ -31,12 +36,24 @@ export const TopographicBackground: React.FC = () => {
     let t = 0;
     const lines = 65; // Number of contour lines across the screen
 
-    const draw = () => {
+    // The waves drift very slowly, so 30fps looks identical to 60fps at half the cost
+    // of redrawing (and re-compositing) a full-screen canvas.
+    const FRAME_MS = 1000 / 30;
+    let lastDraw = 0;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const draw = (now: number = performance.now()) => {
+      if (now - lastDraw < FRAME_MS - 1) {
+        animationFrameId = requestAnimationFrame(draw);
+        return;
+      }
+      lastDraw = now;
+
       const isDark = themeRef.current === 'dark';
       ctx.fillStyle = isDark ? '#030804' : '#ffffff';
       ctx.fillRect(0, 0, width, height);
 
-      t += 0.003;
+      t += 0.006;
 
       for (let i = 0; i < lines; i++) {
         const lineFraction = i / lines;
@@ -71,7 +88,7 @@ export const TopographicBackground: React.FC = () => {
         ctx.stroke();
       }
 
-      animationFrameId = requestAnimationFrame(draw);
+      if (!prefersReducedMotion) animationFrameId = requestAnimationFrame(draw);
     };
 
     draw();

@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from 'react';
 import { Code2, Crown, Users, Rocket, Cpu, Terminal, Shield, Sparkles } from 'lucide-react';
 import { useScrambleText } from '../hooks/useScrambleText.ts';
@@ -56,7 +57,7 @@ export const Domains: React.FC = () => {
   useEffect(() => {
     async function fetchDomains() {
       try {
-        const res = await fetch('/api/public/domains');
+        const res = await fetch(`${API_BASE}/api/public/domains`);
         if (res.ok) {
           const json = await res.json();
           if (json.success && Array.isArray(json.data) && json.data.length > 0) {

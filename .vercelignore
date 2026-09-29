@@ -1,0 +1,11 @@
+# Frontend deploy: the backend deploys separately from server/, and raw source photos aren't used by the site
+server
+.env
+.env.*
+/*.JPG
+/*.PNG
+/*.WEBP
+/*.HEIC
+/*.jpeg
+/*.jpg
+/*.svg

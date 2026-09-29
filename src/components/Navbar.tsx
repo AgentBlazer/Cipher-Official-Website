@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext.tsx";
@@ -25,7 +26,7 @@ export const Navbar: React.FC = () => {
 
   // Fetch dynamic logo from SiteContent
   useEffect(() => {
-    fetch("/api/public/content")
+    fetch(`${API_BASE}/api/public/content`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.data) {

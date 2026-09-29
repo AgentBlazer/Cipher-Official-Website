@@ -1,4 +1,5 @@
 ﻿import React, { useState } from "react";
+import { API_BASE } from "../../lib/api.ts";
 import { KeyRound, Shield, Server, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.tsx";
 import { useToast } from "../context/ToastContext.tsx";
@@ -31,7 +32,7 @@ export const SettingsPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/auth/change-password", {
+      const res = await fetch(`${API_BASE}/api/auth/change-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

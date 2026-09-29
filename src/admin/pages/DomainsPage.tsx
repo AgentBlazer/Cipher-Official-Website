@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../lib/api.ts";
 import { Plus, Edit2, Trash2, Search, Eye, EyeOff, Loader2, Code2, Crown, Users, Rocket, Cpu, Terminal, Shield, Sparkles } from "lucide-react";
 import { Modal } from "../components/Modal.tsx";
 import { ConfirmDialog } from "../components/ConfirmDialog.tsx";
@@ -51,7 +52,7 @@ export const DomainsPage: React.FC = () => {
   const loadDomains = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/domains", { credentials: "include" });
+      const res = await fetch(`${API_BASE}/api/admin/domains`, { credentials: "include" });
       const data = await res.json();
       if (res.ok && data.success) {
         setDomains(data.data || []);
@@ -104,7 +105,7 @@ export const DomainsPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const url = editingDomain ? `/api/admin/domains/${editingDomain.id}` : "/api/admin/domains";
+      const url = editingDomain ? `${API_BASE}/api/admin/domains/${editingDomain.id}` : `${API_BASE}/api/admin/domains`;
       const method = editingDomain ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -132,7 +133,7 @@ export const DomainsPage: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/domains/${deleteId}`, {
+      const res = await fetch(`${API_BASE}/api/admin/domains/${deleteId}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -148,7 +149,7 @@ export const DomainsPage: React.FC = () => {
 
   const togglePublish = async (d: Domain) => {
     try {
-      const res = await fetch(`/api/admin/domains/${d.id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/domains/${d.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

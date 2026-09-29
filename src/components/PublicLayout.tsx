@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar.tsx";
 import { Footer } from "./Footer.tsx";
-import { CustomCursor } from "./CustomCursor.tsx";
 import { CRTOverlay } from "./CRTOverlay.tsx";
 import { TopographicBackground } from "./TopographicBackground.tsx";
 import { JoinModal } from "./JoinModal.tsx";
@@ -15,10 +14,7 @@ export const PublicLayout: React.FC = () => {
   const [isRootAccessOpen, setIsRootAccessOpen] = useState(false);
 
   return (
-    <div className="public-site-cursor min-h-screen bg-white dark:bg-[#030804] text-gray-900 dark:text-white font-sans selection:bg-[#00ff66] selection:text-black relative transition-colors duration-200">
-      {/* Custom Terminal Cursor */}
-      <CustomCursor />
-
+    <div className="public-site-cursor overflow-x-clip min-h-screen bg-white dark:bg-[#030804] text-gray-900 dark:text-white font-sans selection:bg-[#00ff66] selection:text-black relative transition-colors duration-200">
       {/* CRT Scanline & Vignette Effect */}
       <CRTOverlay />
 

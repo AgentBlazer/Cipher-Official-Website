@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useScrambleText } from '../hooks/useScrambleText.ts';
@@ -23,7 +24,7 @@ export const JoinSection: React.FC<JoinSectionProps> = ({ onOpenJoinModal }) => 
   useEffect(() => {
     async function fetchContent() {
       try {
-        const res = await fetch('/api/public/content');
+        const res = await fetch(`${API_BASE}/api/public/content`);
         if (res.ok) {
           const json = await res.json();
           if (json.map?.join_heading) setHeading(json.map.join_heading);

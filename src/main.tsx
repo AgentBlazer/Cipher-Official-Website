@@ -8,7 +8,6 @@ import { HomePage } from "./pages/HomePage.tsx";
 import { TeamPage } from "./pages/TeamPage.tsx";
 import { EventsPage } from "./pages/EventsPage.tsx";
 import { BlogPage } from "./pages/BlogPage.tsx";
-import { ContributorsPage } from "./pages/ContributorsPage.tsx";
 import { AboutPage } from "./pages/AboutPage.tsx";
 import { ContactPage } from "./pages/ContactPage.tsx";
 import { AdminApp } from "./admin/AdminApp.tsx";
@@ -30,7 +29,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="team" element={<TeamPage />} />
             <Route path="events" element={<EventsPage />} />
             <Route path="blog" element={<BlogPage />} />
-            <Route path="contributors" element={<ContributorsPage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="contact" element={<ContactPage />} />
           </Route>

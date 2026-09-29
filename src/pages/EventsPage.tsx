@@ -1,3 +1,4 @@
+import { API_BASE } from "../lib/api.ts";
 import React, { useState, useEffect } from "react";
 import { Calendar, MapPin, Sparkles, Filter, ArrowRight, Trophy, BookOpen, Layers } from "lucide-react";
 import { EventData, EventModal } from "../components/EventModal.tsx";
@@ -26,7 +27,6 @@ const DEFAULT_EVENTS: EventData[] = [
       "/assets/promptops/slide_05.jpg",
       "/assets/promptops/slide_06.jpg",
       "/assets/promptops/slide_07.jpg",
-      "/assets/promptops/slide_08.jpg",
     ],
   },
   {
@@ -50,8 +50,6 @@ const DEFAULT_EVENTS: EventData[] = [
       "/assets/lumiere/slide_04.jpg",
       "/assets/lumiere/slide_05.jpg",
       "/assets/lumiere/slide_06.jpg",
-      "/assets/lumiere/slide_07.jpg",
-      "/assets/lumiere/slide_08.jpg",
     ],
   },
   {
@@ -123,7 +121,7 @@ export const EventsPage: React.FC = () => {
 
   useEffect(() => {
     // Fetch site content for header customizations
-    fetch("/api/public/content")
+    fetch(`${API_BASE}/api/public/content`)
       .then((res) => (res.ok ? res.json() : null))
       .then((json) => {
         if (json?.map) {
@@ -136,7 +134,7 @@ export const EventsPage: React.FC = () => {
 
     async function fetchEvents() {
       try {
-        const res = await fetch("/api/public/events");
+        const res = await fetch(`${API_BASE}/api/public/events`);
         if (res.ok) {
           const json = await res.json();
           if (Array.isArray(json.data) && json.data.length > 0) {

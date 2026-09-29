@@ -12,42 +12,63 @@ async function main() {
         name: "Nazmin Ziya",
         role: "TREASURER",
         photoUrl: "/assets/leaders/nazmin.jpg",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 1,
+        linkedin: "https://www.linkedin.com/in/nazmin-ziya/",
+        displayOrder: 4,
       },
       {
         name: "Jeslin Ninora",
         role: "JOINT TREASURER",
         photoUrl: "/assets/leaders/jeslin.jpg",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 2,
+        displayOrder: 5,
       },
       {
         name: "Elston Herold Pereira",
         role: "PRESIDENT",
         photoUrl: "/assets/leaders/elston.jpg",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 3,
+        linkedin: "https://www.linkedin.com/in/elston-pereira-452138297/",
+        displayOrder: 1,
       },
       {
         name: "Raynell Lewis",
         role: "VICE PRESIDENT",
         photoUrl: "/assets/leaders/raynell.jpg",
         modalPhotoUrl: "/assets/leaders/raynell_modal.jpg",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 4,
+        displayOrder: 2,
       },
       {
         name: "Chaitra R M",
         role: "SECRETARY",
         photoUrl: "/assets/leaders/chaitra.jpg",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 5,
+        linkedin: "https://www.linkedin.com/in/chaitra-r-mathihalli-048723327/",
+        displayOrder: 3,
+      },
+      {
+        name: "Himansh Ullal",
+        role: "DESIGN HEAD",
+        photoUrl: "/assets/leaders/himansh.jpg",
+        linkedin: "https://www.linkedin.com/in/himanshsputhran/",
+        displayOrder: 6,
+      },
+      {
+        name: "Parthipan J",
+        role: "CONTENT HEAD",
+        photoUrl: "/assets/leaders/parthipan.jpg",
+        linkedin: "https://www.linkedin.com/in/parthipanj/",
+        displayOrder: 7,
+      },
+      {
+        name: "Ruben Saldana",
+        role: "OPERATIONS HEAD",
+        photoUrl: "/assets/leaders/ruben.jpg",
+        linkedin: "https://www.linkedin.com/in/ruben-saldanha-5800561b5/",
+        displayOrder: 8,
+      },
+      {
+        name: "Shamitha K V",
+        role: "CULTURAL HEAD",
+        photoUrl: "/assets/leaders/shamitha.jpg",
+        linkedin: "https://www.linkedin.com/in/shamitha-kv/",
+        displayOrder: 9,
       },
     ];
 
@@ -76,7 +97,7 @@ async function main() {
         displayOrder: 1,
         isPublished: true,
         slides: {
-          create: Array.from({ length: 8 }, (_, i) => ({
+          create: Array.from({ length: 6 }, (_, i) => ({
             imageUrl: `/assets/lumiere/slide_${String(i + 1).padStart(2, "0")}.jpg`,
             order: i + 1,
           })),
@@ -101,7 +122,7 @@ async function main() {
         displayOrder: 2,
         isPublished: true,
         slides: {
-          create: Array.from({ length: 8 }, (_, i) => ({
+          create: Array.from({ length: 7 }, (_, i) => ({
             imageUrl: `/assets/promptops/slide_${String(i + 1).padStart(2, "0")}.jpg`,
             order: i + 1,
           })),
@@ -192,7 +213,7 @@ async function main() {
     { key: "about_photo_1", value: "/assets/about/about_1.jpg", section: "about", label: "About Photo 1", type: "url" },
     { key: "about_photo_2", value: "/assets/about/about_2.jpg", section: "about", label: "About Photo 2", type: "url" },
     { key: "about_photo_3", value: "/assets/about/about_3.jpg", section: "about", label: "About Photo 3", type: "url" },
-    { key: "about_photo_4", value: "", section: "about", label: "About Photo 4", type: "url" },
+    { key: "about_photo_4", value: "/assets/about/about_4.jpg", section: "about", label: "About Photo 4", type: "url" },
     { key: "about_photo_5", value: "", section: "about", label: "About Photo 5", type: "url" },
     { key: "about_photo_6", value: "", section: "about", label: "About Photo 6", type: "url" },
     { key: "about_photo_7", value: "", section: "about", label: "About Photo 7", type: "url" },
@@ -200,10 +221,8 @@ async function main() {
     { key: "activities_desc", value: "Hands-on workshops, industrial visits, and technical sessions run by the Cipher Association — spanning AI, blockchain, research tooling, and career prep.", section: "activities", label: "Activities Section Intro", type: "textarea" },
     { key: "join_heading", value: "Join the Team", section: "join", label: "Join Section Heading", type: "text" },
     { key: "join_text", value: "Whether you want to build, lead, or simply learn — CIPHER is where CSE students turn curiosity into capability. Join the community and help shape what comes next.", section: "join", label: "Join Section Description", type: "textarea" },
-    { key: "contact_email", value: "cipher@sjec.ac.in", section: "footer", label: "Contact Email", type: "text" },
-    { key: "linkedin_url", value: "https://linkedin.com", section: "footer", label: "LinkedIn URL", type: "url" },
-    { key: "github_url", value: "https://github.com", section: "footer", label: "GitHub URL", type: "url" },
-    { key: "instagram_url", value: "https://instagram.com", section: "footer", label: "Instagram URL", type: "url" },
+    { key: "linkedin_url", value: "https://www.linkedin.com/company/ciphersjec/", section: "footer", label: "LinkedIn URL", type: "url" },
+    { key: "instagram_url", value: "https://www.instagram.com/ciphersjec/", section: "footer", label: "Instagram URL", type: "url" },
     { key: "footer_copyright", value: "> © 2026 CIPHER SJEC.", section: "footer", label: "Footer Copyright Text", type: "text" },
   ];
 
@@ -293,96 +312,6 @@ async function main() {
 
     for (const post of samplePosts) {
       await prisma.blogPost.create({ data: post });
-    }
-  }
-
-  // 7. Contributors
-  const existingContributors = await prisma.contributor.count();
-  if (existingContributors === 0) {
-    console.log("Seeding event contributors...");
-    const sampleContributors = [
-      {
-        name: "Chinmayee",
-        role: "Event Co-Lead & Track Winner",
-        eventName: "Prompt Ops-2K26",
-        department: "Computer Science & Engineering",
-        batch: "1st Year CSE",
-        photoUrl: "/assets/leaders/chaitra.jpg",
-        bio: "Top honors in Track 1 of Prompt Ops-2K26; assisted in prompt engineering testbed documentation and peer mentoring.",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 1,
-        isPublished: true,
-      },
-      {
-        name: "Chris Royston Monteiro",
-        role: "Technical Evaluator",
-        eventName: "Prompt Ops-2K26",
-        department: "Computer Science & Engineering",
-        batch: "2nd Year CSE",
-        photoUrl: "/assets/leaders/elston.jpg",
-        bio: "Designed evaluation criteria for image generation prompts and assisted in participant scoring automation.",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 2,
-        isPublished: true,
-      },
-      {
-        name: "Harimurali K S",
-        role: "API Security Challenge Lead",
-        eventName: "Prompt Ops-2K26",
-        department: "Computer Science & Engineering",
-        batch: "3rd Year CSE",
-        photoUrl: "/assets/leaders/raynell.jpg",
-        bio: "Built the adversarial Gemini prompt extraction challenges for Track 2 and configured live rate limiting.",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 3,
-        isPublished: true,
-      },
-      {
-        name: "Venus Suhani D’Lima",
-        role: "Stage & Logistics Coordinator",
-        eventName: "Lumière — The Gala",
-        department: "Computer Science & Engineering",
-        batch: "2nd Year CSE",
-        photoUrl: "/assets/leaders/nazmin.jpg",
-        bio: "Coordinated stage arrangements, entry pass management, and hospitality for faculty guests during the branch entry gala.",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 4,
-        isPublished: true,
-      },
-      {
-        name: "Deeksha Ravi Moger",
-        role: "Creative Media & Banner Lead",
-        eventName: "Lumière — The Gala",
-        department: "Computer Science & Engineering",
-        batch: "2nd Year CSE",
-        photoUrl: "/assets/leaders/jeslin.jpg",
-        bio: "Designed main stage backdrop visual assets, social media flyers, and coordinated lighting aesthetics.",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 5,
-        isPublished: true,
-      },
-      {
-        name: "Venisha Snehal D’Souza",
-        role: "Workshop Mentor",
-        eventName: "Smart Contract Bootcamp",
-        department: "Computer Science & Engineering",
-        batch: "4th Year CSE",
-        photoUrl: "/assets/leaders/chaitra.jpg",
-        bio: "Helped 60+ junior students debug Hardhat smart contract deployments and Sepolia faucet transactions.",
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        displayOrder: 6,
-        isPublished: true,
-      },
-    ];
-
-    for (const c of sampleContributors) {
-      await prisma.contributor.create({ data: c });
     }
   }
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { CustomCursor } from './components/CustomCursor.tsx';
 import { TopographicBackground } from './components/TopographicBackground.tsx';
 import { CRTOverlay } from './components/CRTOverlay.tsx';
 import { IntroBoot } from './components/IntroBoot.tsx';
@@ -22,9 +21,6 @@ export default function App() {
 
   return (
     <div className="public-site-cursor min-h-screen bg-[#030804] text-white selection:bg-[#00ff66] selection:text-black relative">
-      {/* Custom Cursor */}
-      <CustomCursor />
-
       {/* CRT Scanline & Vignette Effect */}
       <CRTOverlay />
 
